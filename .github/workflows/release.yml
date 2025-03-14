@@ -25,27 +25,28 @@ jobs:
       - name: Build for all platforms
         run: |
           mkdir -p dist
+          VERSION=${{ github.event.inputs.version }}
 
           # Linux builds
-          GOOS=linux GOARCH=amd64 go build -o dist/czgo-${{ github.event.inputs.version }}-linux-amd64 .
-          tar -czvf dist/czgo-${{ github.event.inputs.version }}-linux-amd64.tar.gz -C dist czgo-${{ github.event.inputs.version }}-linux-amd64
+          GOOS=linux GOARCH=amd64 go build -o dist/czgo .
+          tar -czvf dist/czgo-${VERSION}-linux-amd64.tar.gz -C dist czgo
 
-          GOOS=linux GOARCH=arm64 go build -o dist/czgo-${{ github.event.inputs.version }}-linux-arm64 .
-          tar -czvf dist/czgo-${{ github.event.inputs.version }}-linux-arm64.tar.gz -C dist czgo-${{ github.event.inputs.version }}-linux-arm64
+          GOOS=linux GOARCH=arm64 go build -o dist/czgo .
+          tar -czvf dist/czgo-${VERSION}-linux-arm64.tar.gz -C dist czgo
 
           # macOS builds
-          GOOS=darwin GOARCH=amd64 go build -o dist/czgo-${{ github.event.inputs.version }}-darwin-amd64 .
-          tar -czvf dist/czgo-${{ github.event.inputs.version }}-darwin-amd64.tar.gz -C dist czgo-${{ github.event.inputs.version }}-darwin-amd64
+          GOOS=darwin GOARCH=amd64 go build -o dist/czgo .
+          tar -czvf dist/czgo-${VERSION}-darwin-amd64.tar.gz -C dist czgo
 
-          GOOS=darwin GOARCH=arm64 go build -o dist/czgo-${{ github.event.inputs.version }}-darwin-arm64 .
-          tar -czvf dist/czgo-${{ github.event.inputs.version }}-darwin-arm64.tar.gz -C dist czgo-${{ github.event.inputs.version }}-darwin-arm64
+          GOOS=darwin GOARCH=arm64 go build -o dist/czgo .
+          tar -czvf dist/czgo-${VERSION}-darwin-arm64.tar.gz -C dist czgo
 
           # Windows builds
-          GOOS=windows GOARCH=amd64 go build -o dist/czgo-${{ github.event.inputs.version }}-windows-amd64.exe .
-          cd dist && zip czgo-${{ github.event.inputs.version }}-windows-amd64.zip czgo-${{ github.event.inputs.version }}-windows-amd64.exe && cd ..
+          GOOS=windows GOARCH=amd64 go build -o dist/czgo.exe .
+          cd dist && zip czgo-${VERSION}-windows-amd64.zip czgo.exe && cd ..
 
-          GOOS=windows GOARCH=arm64 go build -o dist/czgo-${{ github.event.inputs.version }}-windows-arm64.exe .
-          cd dist && zip czgo-${{ github.event.inputs.version }}-windows-arm64.zip czgo-${{ github.event.inputs.version }}-windows-arm64.exe && cd ..
+          GOOS=windows GOARCH=arm64 go build -o dist/czgo.exe .
+          cd dist && zip czgo-${VERSION}-windows-arm64.zip czgo.exe && cd ..
 
       - name: Create Release
         id: create_release
@@ -60,3 +61,4 @@ jobs:
             dist/czgo-${{ github.event.inputs.version }}-windows-arm64.zip
           tag_name: ${{ github.event.inputs.version }}
           make_latest: true
+          token: ${{ secrets.hehe }}
