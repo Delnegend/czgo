@@ -19,7 +19,6 @@ var (
 )
 
 func theWholeThing() (bool, string, error) {
-
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
