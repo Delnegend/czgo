@@ -108,6 +108,19 @@ func hasStaged() bool {
 }
 
 func main() {
+	// Handle --help, -h, -help that just print "Just run czgo"
+	args := os.Args
+	if len(args) >= 2 {
+		if args[1] == "-h" || args[1] == "--help" || args[1] == "-help" || args[1] == "-?" {
+			fmt.Println("Just run czgo")
+			os.Exit(0)
+		}
+		if args[1] == "-v" || args[1] == "--version" || args[1] == "-version" || args[1] == "--v" {
+			fmt.Println("REPLACE_WITH_VERSION_IN_BUILD")
+			os.Exit(0)
+		}
+	}
+
 	// Check if current directory is a git repository
 	if !isGitRepo() {
 		fmt.Println("Not a git repository")
