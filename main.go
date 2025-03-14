@@ -9,15 +9,16 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-func theWholeThing() (bool, string, error) {
-	var (
-		typeOfChange  string
-		scopeOfChange string
-		shortDesc     string
-		longDesc      string
+var (
+	typeOfChange  string
+	scopeOfChange string
+	shortDesc     string
+	longDesc      string
 
-		confirm bool
-	)
+	confirm bool
+)
+
+func theWholeThing() (bool, string, error) {
 
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -57,6 +58,10 @@ func theWholeThing() (bool, string, error) {
 		return false, "", err
 	}
 
+	if shortDesc == "" {
+		return false, "", fmt.Errorf("You must provide a short description")
+	}
+
 	commitMessage := func() string {
 		var sb strings.Builder
 		sb.WriteString(typeOfChange)
@@ -88,7 +93,33 @@ func theWholeThing() (bool, string, error) {
 	return confirm, commitMessage, nil
 }
 
+// isGitRepo checks if the current directory is a git repository
+func isGitRepo() bool {
+	cmd := exec.Command("git", "rev-parse", "--is-inside-work-tree")
+	err := cmd.Run()
+	return err == nil
+}
+
+// hasStaged checks if there are any changes staged for commit
+func hasStaged() bool {
+	cmd := exec.Command("git", "diff", "--cached", "--quiet")
+	err := cmd.Run()
+	return err != nil // Exit status 1 means there are changes, which is what we want
+}
+
 func main() {
+	// Check if current directory is a git repository
+	if !isGitRepo() {
+		fmt.Println("Not a git repository")
+		os.Exit(1)
+	}
+
+	// Check if there are staged changes
+	if !hasStaged() {
+		fmt.Println("No changes staged for commit. Use 'git add' to stage changes.")
+		os.Exit(1)
+	}
+
 	confirm, commitMessage, err := theWholeThing()
 	if err != nil {
 		fmt.Println(err)
